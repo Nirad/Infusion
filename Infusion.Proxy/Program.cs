@@ -15,6 +15,7 @@ using Infusion.IO.Encryption.Login;
 using Infusion.LegacyApi;
 using Infusion.LegacyApi.Console;
 using Infusion.LegacyApi.Events;
+using Infusion.LegacyApi.Injection;
 using Infusion.Logging;
 using Infusion.Packets;
 using Infusion.Packets.Client;
@@ -59,6 +60,10 @@ namespace Infusion.Proxy
 
         public static NetworkStream ServerStream { get; set; }
 
+        internal static ScriptEngine ScriptEngine { get; private set; }
+        public static CSharpScriptEngine CSharpScriptEngine { get; private set; }
+        private static readonly IConsole scriptOutput = Console;
+
         public static void Print(string message)
         {
             Console.WriteLine(ConsoleLineType.Information, message);
@@ -66,6 +71,18 @@ namespace Infusion.Proxy
 
         public static void Main()
         {
+            Program.Start(new ProxyStartConfig()
+            {
+                ServerAddress = "127.0.0.1",
+                ServerEndPoint = new IPEndPoint(IPAddress.Parse("40.86.213.160"), 2593),
+                LocalProxyPort = 5000,
+                ProtocolVersion = new Version(3, 0, 0),
+
+            });
+            while (true)
+            {
+
+            }
         }
 
         private static void HelpCommand(string parameters)
@@ -103,6 +120,7 @@ namespace Infusion.Proxy
 
         public static Task Start(ProxyStartConfig config)
         {
+            Program.commandHandler = new CommandHandler(Diagnostic);
             proxyStartConfig = config;
 
             Console.Info($"Default protocol version: {config.ProtocolVersion}");
@@ -119,18 +137,30 @@ namespace Infusion.Proxy
             LegacyApi = new Legacy(LogConfig, commandHandler, new UltimaServer(serverPacketHandler, SendToServer, packetRegistry), new UltimaClient(clientPacketHandler, SendToClient), Console, packetRegistry, ConfigRepository);
             UO.Initialize(LegacyApi);
 
+            CSharpScriptEngine = new CSharpScriptEngine(Console);
+            ScriptEngine = new ScriptEngine(CSharpScriptEngine, new InjectionScriptEngine(UO.Injection, Console));
+
+            ScriptEngine.Reset();
+            ScriptEngine.ExecuteScript("/Users/jmmiljours/Infusion/Infusion.Proxy/bin/Debug/scripts/startup.csx", new CancellationTokenSource());
+
             commandHandler.RegisterCommand(new Command("dump", DumpPacketLog, false, true,
                 "Dumps packet log - log of network communication between game client and server. Network communication logs are very useful for diagnosing issues like crashes.",
                 executionMode: CommandExecutionMode.Direct));
             commandHandler.RegisterCommand(new Command("help", HelpCommand, false, true, "Shows command help."));
+
             commandHandler.RegisterCommand(new Command(ListCommandName, ListRunningCommands, false, true,
                 "Lists running commands"));
+            commandHandler.RegisterCommand(new Command("reload", Reload, false, true, "Reloads an initial script file."));
             commandHandler.RegisterCommand(new Command("proxy-latency", PrintProxyLatency, false, true, "Shows proxy latency."));
 
             serverEndpoint = config.ServerEndPoint;
             return Main(config.LocalProxyPort, packetRingBufferLogger);
         }
-
+        private static void Reload()
+        {
+            ScriptEngine.Reset();
+            ScriptEngine.ExecuteScript("/Users/jmmiljours/Infusion/Infusion.Proxy/bin/Debug/scripts/startup.csx", new CancellationTokenSource());
+        }
         private static void HandleExtendedLoginSeed(ExtendedLoginSeed extendedLoginSeed)
         {
             Console.Info($"Detected client version: {extendedLoginSeed.ClientVersion}");
