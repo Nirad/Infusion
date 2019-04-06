@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.IO;
@@ -13,9 +12,8 @@ using Infusion.LegacyApi.Console;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
-using Microsoft.CodeAnalysis.Text;
 
-namespace Infusion.Proxy
+namespace Infusion.EngineScripts
 {
     public class CSharpScriptEngine : IScriptEngine
     {

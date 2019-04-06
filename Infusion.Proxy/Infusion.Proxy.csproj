@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net462</TargetFramework>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <OutputPath>bin\$(Configuration)\</OutputPath>
@@ -14,8 +14,6 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="System.Collections.Immutable" Version="1.5.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="2.7.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis" Version="2.7.0" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Data.DataSetExtensions" />
@@ -28,6 +26,5 @@
   <ItemGroup>
     <ProjectReference Include="..\Infusion.LegacyApi\Infusion.LegacyApi.csproj" />
     <ProjectReference Include="..\Infusion\Infusion.csproj" />
-    <ProjectReference Include="..\UltimaSdk\Ultima.csproj" />
   </ItemGroup>
 </Project>

@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Infusion.Proxy
+namespace Infusion.EngineScripts
 {
     public sealed class ScriptEngine
     {
