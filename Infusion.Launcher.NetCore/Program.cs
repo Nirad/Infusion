@@ -66,10 +66,13 @@ namespace Infusion.Launcher.NetCore
 
         private async static void Reload()
         {
+            UO.CommandHandler.BeginTerminate(true);
+            UO.CommandHandler.UnregisterAllPublic();
+
             ScriptEngine.Reset();
             using (var tokenSource = new CancellationTokenSource())
             {
-                await ScriptEngine.ExecuteScript("/Users/jmmiljours/Infusion/Infusion.Proxy/bin/Debug/scripts/startup.csx", new CancellationTokenSource());
+                await ScriptEngine.ExecuteScript("/Users/jmmiljours/Infusion/Infusion.Proxy/bin/Debug/scripts/startup.csx", tokenSource);
             }
         }
     }
