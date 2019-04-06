@@ -12,7 +12,7 @@ namespace Infusion.EngineScripts
     {
         private readonly InjectionHost injection;
         private readonly IConsole scriptOutput;
-        private string currentFileName = "/Users/jmmiljours/Infusion/Infusion.Proxy/bin/Debug/scripts/startup.csx";
+        private string currentFileName;
         private readonly FileSystemWatcher fileWatcher = new FileSystemWatcher();
         private bool fileChanged;
         private readonly System.Timers.Timer timer;
